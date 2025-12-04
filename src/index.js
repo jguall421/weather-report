@@ -5,11 +5,13 @@ const state = {
 };
 
 const getTempElement = () => document.querySelector('#tempValue');
+const getLandscapeElement = () => document.querySelector('#landscape');
+
 
 // display current temp
 const renderTemp = () => {
-  const el = getTempElement();
-  if (el) el.textContent = String(state.counter);
+  const tempElement = getTempElement();
+  if (tempElement) tempElement.textContent = String(state.counter);
   changeCurrentTempColor(state.counter);
 };
 
@@ -40,7 +42,6 @@ const fetchCurrentTemp = async (city) => {
 
 const handleTempValueClicked = async (event) => {
   const cityInput = document.querySelector('#cityNameInput');
-  
   let city;
   if (cityInput) {
     city = cityInput.value.trim();
@@ -67,20 +68,27 @@ const handleTempValueClicked = async (event) => {
 };
 
 const changeCurrentTempColor = (temp) => {
-    const el = getTempElement();
+  const tempElement = getTempElement();
+  const landscapeElement = getLandscapeElement();
+  if (temp >= 80) {
+    tempElement.style.color = 'red';
+    landscapeElement.textContent = '🌵__🐍_🦂_🌵🌵__🐍_🏜_🦂';
+  } else if (temp >= 70) {
+    tempElement.style.color = 'orange';
+    landscapeElement.textContent = '🌸🌿🌼__🌷🌻🌿_☘️🌱_🌻🌷';
+  } else if (temp >= 60) {
+    tempElement.style.color = 'yellow';
+    landscapeElement.textContent = '🌾🌾_🍃_🪨__🛤_🌾🌾🌾_🍃';
+  } else if (temp >= 50) {
+    tempElement.style.color = 'green';
+    landscapeElement.textContent = '🌲🌲⛄️🌲⛄️🍂🌲🍁🌲🌲⛄️🍂🌲';
+  } else {
+    tempElement.style.color = 'teal';
+    landscapeElement.textContent = '🌲🌲⛄️🌲⛄️🍂🌲🍁🌲🌲⛄️🍂🌲';
+  }
+};
 
-    if (temp >= 80) {
-       el.style.color = 'red';
-    } else if (temp >= 70) {
-       el.style.color = 'orange';
-    } else if (temp >= 60) {
-       el.style.color = 'yellow';
-    } else if (temp >= 50) {
-       el.style.color = 'green';
-    } else {
-       el.style.color = 'teal';
-    }
-}
+
 
 const registerEventHandlers = () => {
   const incTempCount = document.querySelector('#increaseTempControl');
