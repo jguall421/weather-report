@@ -6,9 +6,11 @@ const state = {
 
 const getTempElement = () => document.querySelector('#tempValue');
 
+// display current temp
 const renderTemp = () => {
   const el = getTempElement();
   if (el) el.textContent = String(state.counter);
+  changeCurrentTempColor(state.counter);
 };
 
 const addCounter = () => {
@@ -63,6 +65,22 @@ const handleTempValueClicked = async (event) => {
     alert('Failed to fetch realtime temperature. Make sure API key is set and the city name is valid.');
   }
 };
+
+const changeCurrentTempColor = (temp) => {
+    const el = getTempElement();
+
+    if (temp >= 80) {
+       el.style.color = 'red';
+    } else if (temp >= 70) {
+       el.style.color = 'orange';
+    } else if (temp >= 60) {
+       el.style.color = 'yellow';
+    } else if (temp >= 50) {
+       el.style.color = 'green';
+    } else {
+       el.style.color = 'teal';
+    }
+}
 
 const registerEventHandlers = () => {
   const incTempCount = document.querySelector('#increaseTempControl');
