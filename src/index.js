@@ -47,16 +47,6 @@ const updateCityNameHeader = (cityNameInput) => {
   if (cityNameHeaderElement) cityNameHeaderElement.textContent = cityNameInput;
 };
 
-// const handleCityNameInput = (cityInput) => {
-//   if (cityInput) {
-//     cityInput = cityInput.value.trim();
-//   } else {
-//     cityInput = '';
-//   }
-
-
-// };
-
 const handleTempValueClicked = async (event) => {
   const cityInput = document.querySelector('#cityNameInput');
   let city;
