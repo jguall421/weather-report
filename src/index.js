@@ -37,6 +37,9 @@ const registerEventHandlers = () => {
 
   const resetButton = document.querySelector('#currentTempButton');
   resetButton.addEventListener('click', handleTempValueClicked);
+
+  const countContainer = document.querySelector('#tempValue');
+  if (countContainer) countContainer.textContent = `${state.counter}`;
 };
 
 
