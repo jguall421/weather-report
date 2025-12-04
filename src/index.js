@@ -6,6 +6,8 @@ const state = {
 
 const getTempElement = () => document.querySelector('#tempValue');
 const getLandscapeElement = () => document.querySelector('#landscape');
+const getHeadercityNameElement = () => document.querySelector('headerCityName');
+const getCityNameInput = () => document.querySelector('cityNameInput');
 
 
 // display current temp
@@ -39,6 +41,21 @@ const fetchCurrentTemp = async (city) => {
   // const resp = await axios.get(url);
   // return Math.round(resp.data.main.temp);
 };
+
+const updateCityNameHeader = (cityNameInput) => {
+  const cityNameHeaderElement = getHeadercityNameElement();
+  if (cityNameHeaderElement) cityNameHeaderElement.textContent = cityNameInput;
+};
+
+// const handleCityNameInput = (cityInput) => {
+//   if (cityInput) {
+//     cityInput = cityInput.value.trim();
+//   } else {
+//     cityInput = '';
+//   }
+
+
+// };
 
 const handleTempValueClicked = async (event) => {
   const cityInput = document.querySelector('#cityNameInput');
@@ -90,6 +107,7 @@ const changeCurrentTempColor = (temp) => {
 
 
 
+
 const registerEventHandlers = () => {
   const incTempCount = document.querySelector('#increaseTempControl');
   if (incTempCount) incTempCount.addEventListener('click', addCounter);
@@ -100,8 +118,16 @@ const registerEventHandlers = () => {
   const resetButton = document.querySelector('#currentTempButton');
   if (resetButton) resetButton.addEventListener('click', handleTempValueClicked);
 
+  //city name input handler
+  const cityNameInput = getCityNameInput();
+  if (cityNameInput) cityNameInput.addEventListener('input', updateCityNameHeader(cityNameInput));
+
+
+
+
   // Initialize displayed temperature
   renderTemp();
+  
 };
 
 document.addEventListener('DOMContentLoaded', registerEventHandlers);
