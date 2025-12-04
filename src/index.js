@@ -4,17 +4,25 @@ const state = {
   counter: 65 // default temperature value, fix it later
 };
 
-const getTempElement = () => document.querySelector('#tempValue');
-const getLandscapeElement = () => document.querySelector('#landscape');
-const getHeadercityNameElement = () => document.querySelector('#headerCityName');
-const getCityNameInputElement = () => document.querySelector('#cityNameInput');
-const getCityNameResetElement = () => document.querySelector('#cityNameReset');
-const getIncreaseTempControlElement = () => document.querySelector('#increaseTempControl');
-const getDecreaseTempControlElement = () => document.querySelector('#decreaseTempControl');
-const getCurrentTempButtonElement = () => document.querySelector('#currentTempButton');
+let tempElement = null;
+let landscapeElement = null;
+let headerCityElement = null;
+let cityNameInputElement = null;
+let cityNameResetElement = null;
+let increaseTempControlElement = null;
+let decreaseTempControlElement = null;
+let currentTempButtonElement = null;
+
+const getElementBySelector = (selector) => {
+  const element = document.querySelector(selector);
+  if (element) {
+    return element;
+  } else {
+    return null;
+  }
+};
 
 const displayCurrentTemp = () => {
-  const tempElement = getTempElement();
   if (tempElement) tempElement.textContent = String(state.counter);
   changeCurrentTempColor(state.counter);
 };
@@ -66,8 +74,7 @@ const handleTempValueClicked = async (event) => {
 };
 
 const changeCurrentTempColor = (temp) => {
-  const tempElement = getTempElement();
-  const landscapeElement = getLandscapeElement();
+  if (!tempElement || !landscapeElement) return;
   if (temp >= 80) {
     tempElement.style.color = 'red';
     landscapeElement.textContent = '🌵__🐍_🦂_🌵🌵__🐍_🏜_🦂';
@@ -87,47 +94,45 @@ const changeCurrentTempColor = (temp) => {
 };
 
 const updateCityNameHeader = (cityNameInput) => {
-  const cityNameHeaderElement = getHeadercityNameElement();
-  if (cityNameHeaderElement) cityNameHeaderElement.textContent = cityNameInput;
+  if (headerCityElement) headerCityElement.textContent = cityNameInput;
 };
 
 const getCityInputValue = () => {
-  const cityNameInputElement = getCityNameInputElement();
   if (cityNameInputElement) {
     return cityNameInputElement.value.trim();
-  } else {
-    return '';
   }
+  return '';
 };
 
 const registerEventHandlers = () => {
-  const incTempCountElement = getIncreaseTempControlElement();
-  if (incTempCountElement) incTempCountElement.addEventListener('click', addCounter);
+  tempElement = getElementBySelector('#tempValue');
+  landscapeElement = getElementBySelector('#landscape');
+  headerCityElement = getElementBySelector('#headerCityName');
+  cityNameInputElement = getElementBySelector('#cityNameInput');
+  cityNameResetElement = getElementBySelector('#cityNameReset');
+  increaseTempControlElement = getElementBySelector('#increaseTempControl');
+  decreaseTempControlElement = getElementBySelector('#decreaseTempControl');
+  currentTempButtonElement = getElementBySelector('#currentTempButton');
 
-  const decTempCountElement = getDecreaseTempControlElement();
-  if (decTempCountElement) decTempCountElement.addEventListener('click', subtractCounter);
-  
-  const resetButtonElement = getCurrentTempButtonElement();
-  if (resetButtonElement) resetButtonElement.addEventListener('click', handleTempValueClicked);
+  if (increaseTempControlElement) increaseTempControlElement.addEventListener('click', addCounter);
+  if (decreaseTempControlElement) decreaseTempControlElement.addEventListener('click', subtractCounter);
+  if (currentTempButtonElement) currentTempButtonElement.addEventListener('click', handleTempValueClicked);
 
-  const cityNameInputElement = getCityNameInputElement();
   if (cityNameInputElement) {
-      const initialCityName = getCityInputValue();
-      // Set initial city name header
-      updateCityNameHeader(initialCityName);
-      cityNameInputElement.addEventListener('input', () => {
-      const cityName = getCityInputValue();
-      updateCityNameHeader(cityName);
+    const initialCityName = getCityInputValue();
+    // Set initial city name header
+    updateCityNameHeader(initialCityName);
+    cityNameInputElement.addEventListener('input', () => {
+        const cityName = getCityInputValue();
+        updateCityNameHeader(cityName);
     });
   }
 
-  const cityResetElement = getCityNameResetElement();
-  if (cityResetElement) {
-    cityResetElement.addEventListener('click', () => {
-      const citynameInputElement = getCityNameInputElement();
-      if (citynameInputElement) {
+  if (cityNameResetElement) {
+    cityNameResetElement.addEventListener('click', () => {
+      if (cityNameInputElement) {
         const defaultName = 'Seattle';
-        citynameInputElement.value = defaultName;
+        cityNameInputElement.value = defaultName;
         updateCityNameHeader(defaultName);
       }
     });
