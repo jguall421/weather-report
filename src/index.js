@@ -105,12 +105,14 @@ const registerEventHandlers = () => {
   const resetButton = document.querySelector('#currentTempButton');
   if (resetButton) resetButton.addEventListener('click', handleTempValueClicked);
 
-  // city name input handler
   const cityNameInput = getCityNameInput();
-  updateCityNameHeader(cityNameInput.value);
+  
   if (cityNameInput) {
-      cityNameInput.addEventListener('input', (event) => {
-      const cityName = event.target.value;
+      const initialCityName = cityNameInput.value;
+      // Set initial city name header
+      updateCityNameHeader(initialCityName);
+      cityNameInput.addEventListener('input', () => {
+      const cityName = cityNameInput.value;
       updateCityNameHeader(cityName);
     });
   }
