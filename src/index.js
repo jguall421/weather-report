@@ -8,12 +8,12 @@ const getTempElement = () => document.querySelector('#tempValue');
 const getLandscapeElement = () => document.querySelector('#landscape');
 const getHeadercityNameElement = () => document.querySelector('#headerCityName');
 const getCityNameInputElement = () => document.querySelector('#cityNameInput');
+const getCityNameResetElement = () => document.querySelector('#cityNameReset');
 const getIncreaseTempControlElement = () => document.querySelector('#increaseTempControl');
 const getDecreaseTempControlElement = () => document.querySelector('#decreaseTempControl');
 const getCurrentTempButtonElement = () => document.querySelector('#currentTempButton');
 
-// display current temp
-const renderTemp = () => {
+const displayCurrentTemp = () => {
   const tempElement = getTempElement();
   if (tempElement) tempElement.textContent = String(state.counter);
   changeCurrentTempColor(state.counter);
@@ -21,12 +21,12 @@ const renderTemp = () => {
 
 const addCounter = () => {
   state.counter += 1;
-  renderTemp();
+  displayCurrentTemp();
 };
 
 const subtractCounter = () => {
   state.counter -= 1;
-  renderTemp();
+  displayCurrentTemp();
 };
 
 const fetchCurrentTemp = async (city) => {
@@ -44,34 +44,23 @@ const fetchCurrentTemp = async (city) => {
   // return Math.round(resp.data.main.temp);
 };
 
-const updateCityNameHeader = (cityNameInput) => {
-  const cityNameHeaderElement = getHeadercityNameElement();
-  if (cityNameHeaderElement) cityNameHeaderElement.textContent = cityNameInput;
-};
-
 const handleTempValueClicked = async (event) => {
-  const cityInput = document.querySelector('#cityNameInput');
-  let city;
-  if (cityInput) {
-    city = cityInput.value.trim();
-  } else {
-    city = '';
-  }
+  const city = getCityInputValue();
 
   if (!city) {
     state.counter = 65;
-    renderTemp();
+    displayCurrentTemp();
     return;
   }
 
   try {
     const temp = await fetchCurrentTemp(city);
     state.counter = temp;
-    renderTemp();
+    displayCurrentTemp();
   } catch (err) {
     console.error('Failed to fetch temperature:', err);
     state.counter = 65;
-    renderTemp();
+    displayCurrentTemp();
     alert('Failed to fetch realtime temperature. Make sure API key is set and the city name is valid.');
   }
 };
@@ -97,6 +86,20 @@ const changeCurrentTempColor = (temp) => {
   }
 };
 
+const updateCityNameHeader = (cityNameInput) => {
+  const cityNameHeaderElement = getHeadercityNameElement();
+  if (cityNameHeaderElement) cityNameHeaderElement.textContent = cityNameInput;
+};
+
+const getCityInputValue = () => {
+  const cityNameInputElement = getCityNameInputElement();
+  if (cityNameInputElement) {
+    return cityNameInputElement.value.trim();
+  } else {
+    return '';
+  }
+};
+
 const registerEventHandlers = () => {
   const incTempCountElement = getIncreaseTempControlElement();
   if (incTempCountElement) incTempCountElement.addEventListener('click', addCounter);
@@ -108,19 +111,29 @@ const registerEventHandlers = () => {
   if (resetButtonElement) resetButtonElement.addEventListener('click', handleTempValueClicked);
 
   const cityNameInputElement = getCityNameInputElement();
-  
   if (cityNameInputElement) {
-      const initialCityName = cityNameInputElement.value;
+      const initialCityName = getCityInputValue();
       // Set initial city name header
       updateCityNameHeader(initialCityName);
       cityNameInputElement.addEventListener('input', () => {
-      const cityName = cityNameInputElement.value;
+      const cityName = getCityInputValue();
       updateCityNameHeader(cityName);
     });
   }
 
-  // Initialize displayed temperature
-  renderTemp();
+  const cityResetElement = getCityNameResetElement();
+  if (cityResetElement) {
+    cityResetElement.addEventListener('click', () => {
+      const citynameInputElement = getCityNameInputElement();
+      if (citynameInputElement) {
+        const defaultName = 'Seattle';
+        citynameInputElement.value = defaultName;
+        updateCityNameHeader(defaultName);
+      }
+    });
+  }
+
+  displayCurrentTemp();
   
 };
 
