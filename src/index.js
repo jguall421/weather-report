@@ -6,8 +6,8 @@ const state = {
 
 const getTempElement = () => document.querySelector('#tempValue');
 const getLandscapeElement = () => document.querySelector('#landscape');
-const getHeadercityNameElement = () => document.querySelector('headerCityName');
-const getCityNameInput = () => document.querySelector('cityNameInput');
+const getHeadercityNameElement = () => document.querySelector('#headerCityName');
+const getCityNameInput = () => document.querySelector('#cityNameInput');
 
 
 // display current temp
@@ -105,9 +105,6 @@ const changeCurrentTempColor = (temp) => {
   }
 };
 
-
-
-
 const registerEventHandlers = () => {
   const incTempCount = document.querySelector('#increaseTempControl');
   if (incTempCount) incTempCount.addEventListener('click', addCounter);
@@ -118,12 +115,15 @@ const registerEventHandlers = () => {
   const resetButton = document.querySelector('#currentTempButton');
   if (resetButton) resetButton.addEventListener('click', handleTempValueClicked);
 
-  //city name input handler
+  // city name input handler
   const cityNameInput = getCityNameInput();
-  if (cityNameInput) cityNameInput.addEventListener('input', updateCityNameHeader(cityNameInput));
-
-
-
+  updateCityNameHeader(cityNameInput.value);
+  if (cityNameInput) {
+      cityNameInput.addEventListener('input', (event) => {
+      const cityName = event.target.value;
+      updateCityNameHeader(cityName);
+    });
+  }
 
   // Initialize displayed temperature
   renderTemp();
