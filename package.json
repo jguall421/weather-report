@@ -19,5 +19,9 @@
         "eslint-plugin-node": "^11.1.0",
         "eslint-plugin-promise": "^7.2.1",
         "globals": "^16.0.0"
+    },
+    "dependencies": {
+        "axios": "^1.13.2",
+        "dotenv": "^17.2.3"
     }
 }
