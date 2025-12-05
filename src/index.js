@@ -8,12 +8,14 @@ const state = {
 
 let tempElement = null;
 let landscapeElement = null;
+let skyElement = null;
 let headerCityElement = null;
 let cityNameInputElement = null;
 let cityNameResetElement = null;
 let increaseTempControlElement = null;
 let decreaseTempControlElement = null;
 let currentTempButtonElement = null;
+let skySelectElement = null;
 
 const getElementBySelector = (selector) => {
   const element = document.querySelector(selector);
@@ -117,6 +119,21 @@ const handleTempValueClicked = async (event) => {
   }
 };
 
+const skySelectDropDwon = () => {
+  if (!skyElement) return;
+  let option = skySelectElement.value;
+
+  if (option == 'Sunny') {
+    skyElement.textContent = '☁️ ☁️ ☁️ ☀️ ☁️ ☁️';
+  } else if (option == 'Cloudy') {
+    skyElement.textContent = '☁️☁️ ☁️ ☁️☁️ ☁️ 🌤 ☁️ ☁️☁️';
+  } else if (option == 'Rainy') {
+    skyElement.textContent = '🌧🌈⛈🌧🌧💧⛈🌧🌦🌧💧🌧🌧';
+  } else if (option == 'Snowy') {
+    skyElement.textContent = '🌨❄️🌨🌨❄️❄️🌨❄️🌨❄️❄️🌨🌨';
+  }
+}
+
 const updateCityNameHeader = (cityNameInput) => {
   if (headerCityElement) headerCityElement.textContent = cityNameInput;
 };
@@ -137,10 +154,18 @@ const registerEventHandlers = () => {
   increaseTempControlElement = getElementBySelector('#increaseTempControl');
   decreaseTempControlElement = getElementBySelector('#decreaseTempControl');
   currentTempButtonElement = getElementBySelector('#currentTempButton');
+  skySelectElement = getElementBySelector('#skySelect');
+  skyElement = getElementBySelector('#sky');
 
   if (increaseTempControlElement) increaseTempControlElement.addEventListener('click', addCounter);
   if (decreaseTempControlElement) decreaseTempControlElement.addEventListener('click', subtractCounter);
   if (currentTempButtonElement) currentTempButtonElement.addEventListener('click', handleTempValueClicked);
+
+  if (skySelectElement) skySelectElement.addEventListener('', skySelectDropDwon);
+  //  default sky as Sunny
+  if (skySelectElement && skyElement) {
+    skyElement.textContent = '☁️ ☁️ ☁️ ☀️ ☁️ ☁️';
+  }
 
   if (cityNameInputElement) {
     const initialCityName = getCityInputValue();
