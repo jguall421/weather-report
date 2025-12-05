@@ -1,7 +1,9 @@
 'use strict';
 
+const BASE_URL = 'https://ada-weather-report-proxy-server.onrender.com';
+
 const state = {
-  counter: 65 // default temperature value, fix it later
+  counter: 72 // default temperature value
 };
 
 let tempElement = null;
@@ -37,42 +39,6 @@ const subtractCounter = () => {
   displayCurrentTemp();
 };
 
-const fetchCurrentTemp = async (city) => {
-  // Testing code:
-  const apiKey = 'YOUR_API_KEY';
-  if (!city) throw new Error('City required');
-  if (apiKey === 'YOUR_API_KEY') {
-    console.warn('No API key set');
-    // a default value for current temperature
-    return 65;
-  }
-
-  // const url = find the url for the weather API, using city and apiKey
-  // const resp = await axios.get(url);
-  // return Math.round(resp.data.main.temp);
-};
-
-const handleTempValueClicked = async (event) => {
-  const city = getCityInputValue();
-
-  if (!city) {
-    state.counter = 65;
-    displayCurrentTemp();
-    return;
-  }
-
-  try {
-    const temp = await fetchCurrentTemp(city);
-    state.counter = temp;
-    displayCurrentTemp();
-  } catch (err) {
-    console.error('Failed to fetch temperature:', err);
-    state.counter = 65;
-    displayCurrentTemp();
-    alert('Failed to fetch realtime temperature. Make sure API key is set and the city name is valid.');
-  }
-};
-
 const changeCurrentTempColor = (temp) => {
   if (!tempElement || !landscapeElement) return;
   if (temp >= 80) {
@@ -90,6 +56,64 @@ const changeCurrentTempColor = (temp) => {
   } else {
     tempElement.style.color = 'teal';
     landscapeElement.textContent = '🌲🌲⛄️🌲⛄️🍂🌲🍁🌲🌲⛄️🍂🌲';
+  }
+};
+
+const getLocation = (locationName) => {
+  return axios
+    .get(`${BASE_URL}/location?q=${locationName}`)
+    .then((response) => {
+      const { lat, lon } = response.data[0];
+      return { lat, lon };
+    })
+    .catch((error) => {
+      console.error(`Error fetching coordinates for ${locationName}:`, error);
+    });
+};
+
+const getWeather = (lat, lon) => {
+  return axios
+    .get(`${BASE_URL}/weather?lat=${lat}&lon=${lon}`)
+    .then((response) => {
+      const tempK = response.data.main.temp;
+      const tempF = (tempK - 273.15) * (9 / 5) + 32;
+      state.counter = tempF;
+      displayCurrentTemp();
+      return tempF;
+    })
+    .catch((error) => {
+      console.error(`Error fetching weather for ${lat},${lon}:`, error);
+    });
+};
+
+const fetchCurrentTemp = async (city) => {
+  if (!city) {
+    throw new Error('City name is required to fetch temperature.');
+  }
+  // create lat and lon to store values returned from getLocation()
+  const { lat, lon } = await getLocation(city);
+  const tempF = await getWeather(lat, lon);
+  return Math.round(tempF);
+};
+
+const handleTempValueClicked = async (event) => {
+  const city = getCityInputValue();
+
+  if (!city) {
+    state.counter = 72;
+    displayCurrentTemp();
+    return;
+  }
+
+  try {
+    const temp = await fetchCurrentTemp(city);
+    state.counter = temp;
+    displayCurrentTemp();
+  } catch (err) {
+    console.error('Failed to fetch temperature:', err);
+    state.counter = 65;
+    displayCurrentTemp();
+    alert('Failed to fetch realtime temperature. Make sure API key is set and the city name is valid.');
   }
 };
 
@@ -123,8 +147,8 @@ const registerEventHandlers = () => {
     // Set initial city name header
     updateCityNameHeader(initialCityName);
     cityNameInputElement.addEventListener('input', () => {
-        const cityName = getCityInputValue();
-        updateCityNameHeader(cityName);
+      const cityName = getCityInputValue();
+      updateCityNameHeader(cityName);
     });
   }
 
@@ -139,7 +163,6 @@ const registerEventHandlers = () => {
   }
 
   displayCurrentTemp();
-  
 };
 
 document.addEventListener('DOMContentLoaded', registerEventHandlers);
