@@ -161,7 +161,7 @@ const registerEventHandlers = () => {
   if (decreaseTempControlElement) decreaseTempControlElement.addEventListener('click', subtractCounter);
   if (currentTempButtonElement) currentTempButtonElement.addEventListener('click', handleTempValueClicked);
 
-  if (skySelectElement) skySelectElement.addEventListener('', skySelectDropDwon);
+  if (skySelectElement) skySelectElement.addEventListener('change', skySelectDropDwon);
   //  default sky as Sunny
   if (skySelectElement && skyElement) {
     skyElement.textContent = '☁️ ☁️ ☁️ ☀️ ☁️ ☁️';
