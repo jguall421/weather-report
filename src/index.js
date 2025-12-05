@@ -4,29 +4,37 @@ const state = {
   counter: 65 // default temperature value, fix it later
 };
 
-const getTempElement = () => document.querySelector('#tempValue');
-const getLandscapeElement = () => document.querySelector('#landscape');
-const getHeadercityNameElement = () => document.querySelector('#headerCityName');
-const getCityNameInputElement = () => document.querySelector('#cityNameInput');
-const getIncreaseTempControlElement = () => document.querySelector('#increaseTempControl');
-const getDecreaseTempControlElement = () => document.querySelector('#decreaseTempControl');
-const getCurrentTempButtonElement = () => document.querySelector('#currentTempButton');
+let tempElement = null;
+let landscapeElement = null;
+let headerCityElement = null;
+let cityNameInputElement = null;
+let cityNameResetElement = null;
+let increaseTempControlElement = null;
+let decreaseTempControlElement = null;
+let currentTempButtonElement = null;
 
-// display current temp
-const renderTemp = () => {
-  const tempElement = getTempElement();
+const getElementBySelector = (selector) => {
+  const element = document.querySelector(selector);
+  if (element) {
+    return element;
+  } else {
+    return null;
+  }
+};
+
+const displayCurrentTemp = () => {
   if (tempElement) tempElement.textContent = String(state.counter);
   changeCurrentTempColor(state.counter);
 };
 
 const addCounter = () => {
   state.counter += 1;
-  renderTemp();
+  displayCurrentTemp();
 };
 
 const subtractCounter = () => {
   state.counter -= 1;
-  renderTemp();
+  displayCurrentTemp();
 };
 
 const fetchCurrentTemp = async (city) => {
@@ -44,41 +52,29 @@ const fetchCurrentTemp = async (city) => {
   // return Math.round(resp.data.main.temp);
 };
 
-const updateCityNameHeader = (cityNameInput) => {
-  const cityNameHeaderElement = getHeadercityNameElement();
-  if (cityNameHeaderElement) cityNameHeaderElement.textContent = cityNameInput;
-};
-
 const handleTempValueClicked = async (event) => {
-  const cityInput = document.querySelector('#cityNameInput');
-  let city;
-  if (cityInput) {
-    city = cityInput.value.trim();
-  } else {
-    city = '';
-  }
+  const city = getCityInputValue();
 
   if (!city) {
     state.counter = 65;
-    renderTemp();
+    displayCurrentTemp();
     return;
   }
 
   try {
     const temp = await fetchCurrentTemp(city);
     state.counter = temp;
-    renderTemp();
+    displayCurrentTemp();
   } catch (err) {
     console.error('Failed to fetch temperature:', err);
     state.counter = 65;
-    renderTemp();
+    displayCurrentTemp();
     alert('Failed to fetch realtime temperature. Make sure API key is set and the city name is valid.');
   }
 };
 
 const changeCurrentTempColor = (temp) => {
-  const tempElement = getTempElement();
-  const landscapeElement = getLandscapeElement();
+  if (!tempElement || !landscapeElement) return;
   if (temp >= 80) {
     tempElement.style.color = 'red';
     landscapeElement.textContent = '🌵__🐍_🦂_🌵🌵__🐍_🏜_🦂';
@@ -97,30 +93,52 @@ const changeCurrentTempColor = (temp) => {
   }
 };
 
-const registerEventHandlers = () => {
-  const incTempCountElement = getIncreaseTempControlElement();
-  if (incTempCountElement) incTempCountElement.addEventListener('click', addCounter);
+const updateCityNameHeader = (cityNameInput) => {
+  if (headerCityElement) headerCityElement.textContent = cityNameInput;
+};
 
-  const decTempCountElement = getDecreaseTempControlElement();
-  if (decTempCountElement) decTempCountElement.addEventListener('click', subtractCounter);
-  
-  const resetButtonElement = getCurrentTempButtonElement();
-  if (resetButtonElement) resetButtonElement.addEventListener('click', handleTempValueClicked);
-
-  const cityNameInputElement = getCityNameInputElement();
-  
+const getCityInputValue = () => {
   if (cityNameInputElement) {
-      const initialCityName = cityNameInputElement.value;
-      // Set initial city name header
-      updateCityNameHeader(initialCityName);
-      cityNameInputElement.addEventListener('input', () => {
-      const cityName = cityNameInputElement.value;
-      updateCityNameHeader(cityName);
+    return cityNameInputElement.value.trim();
+  }
+  return '';
+};
+
+const registerEventHandlers = () => {
+  tempElement = getElementBySelector('#tempValue');
+  landscapeElement = getElementBySelector('#landscape');
+  headerCityElement = getElementBySelector('#headerCityName');
+  cityNameInputElement = getElementBySelector('#cityNameInput');
+  cityNameResetElement = getElementBySelector('#cityNameReset');
+  increaseTempControlElement = getElementBySelector('#increaseTempControl');
+  decreaseTempControlElement = getElementBySelector('#decreaseTempControl');
+  currentTempButtonElement = getElementBySelector('#currentTempButton');
+
+  if (increaseTempControlElement) increaseTempControlElement.addEventListener('click', addCounter);
+  if (decreaseTempControlElement) decreaseTempControlElement.addEventListener('click', subtractCounter);
+  if (currentTempButtonElement) currentTempButtonElement.addEventListener('click', handleTempValueClicked);
+
+  if (cityNameInputElement) {
+    const initialCityName = getCityInputValue();
+    // Set initial city name header
+    updateCityNameHeader(initialCityName);
+    cityNameInputElement.addEventListener('input', () => {
+        const cityName = getCityInputValue();
+        updateCityNameHeader(cityName);
     });
   }
 
-  // Initialize displayed temperature
-  renderTemp();
+  if (cityNameResetElement) {
+    cityNameResetElement.addEventListener('click', () => {
+      if (cityNameInputElement) {
+        const defaultName = 'Seattle';
+        cityNameInputElement.value = defaultName;
+        updateCityNameHeader(defaultName);
+      }
+    });
+  }
+
+  displayCurrentTemp();
   
 };
 
