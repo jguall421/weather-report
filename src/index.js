@@ -16,6 +16,7 @@ let increaseTempControlElement = null;
 let decreaseTempControlElement = null;
 let currentTempButtonElement = null;
 let skySelectElement = null;
+let gardenContent = null;
 
 const getElementBySelector = (selector) => {
   const element = document.querySelector(selector);
@@ -120,19 +121,23 @@ const handleTempValueClicked = async (event) => {
 };
 
 const skySelectDropDwon = () => {
-  if (!skyElement) return;
+  if (!skyElement || !gardenContent) return;
   let option = skySelectElement.value;
 
   if (option == 'Sunny') {
     skyElement.textContent = '☁️ ☁️ ☁️ ☀️ ☁️ ☁️';
+    gardenContent.style.backgroundColor = 'rgb(221, 255, 255)'; // Sunny
   } else if (option == 'Cloudy') {
     skyElement.textContent = '☁️☁️ ☁️ ☁️☁️ ☁️ 🌤 ☁️ ☁️☁️';
+    gardenContent.style.backgroundColor = 'lightgrey'; // Cloudy
   } else if (option == 'Rainy') {
     skyElement.textContent = '🌧🌈⛈🌧🌧💧⛈🌧🌦🌧💧🌧🌧';
+    gardenContent.style.backgroundColor = 'lightblue'; // Rainy
   } else if (option == 'Snowy') {
     skyElement.textContent = '🌨❄️🌨🌨❄️❄️🌨❄️🌨❄️❄️🌨🌨';
+    gardenContent.style.backgroundColor = 'lightsteelblue'; // Snowy
   }
-}
+};
 
 const updateCityNameHeader = (cityNameInput) => {
   if (headerCityElement) headerCityElement.textContent = cityNameInput;
@@ -156,6 +161,8 @@ const registerEventHandlers = () => {
   currentTempButtonElement = getElementBySelector('#currentTempButton');
   skySelectElement = getElementBySelector('#skySelect');
   skyElement = getElementBySelector('#sky');
+  gardenContent = getElementBySelector('#gardenContent');
+
 
   if (increaseTempControlElement) increaseTempControlElement.addEventListener('click', addCounter);
   if (decreaseTempControlElement) decreaseTempControlElement.addEventListener('click', subtractCounter);
